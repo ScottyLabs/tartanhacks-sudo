@@ -1,11 +1,24 @@
 import type { GetServerSidePropsContext } from "next";
 import {
   getServerSession,
-  type NextAuthOptions,
+  type User,
   type DefaultSession,
+  type NextAuthOptions,
+  type Session,
 } from "next-auth";
-import DiscordProvider from "next-auth/providers/discord";
 import { env } from "../env.mjs";
+import CredentialsProvider from "next-auth/providers/credentials";
+import type { JWT } from "next-auth/jwt/types.js";
+
+interface HelixUser {
+  _id: string;
+  admin: boolean;
+  email: string;
+}
+
+interface AdminUser extends User {
+  admin: boolean;
+}
 
 /**
  * Module augmentation for `next-auth` types.
@@ -36,31 +49,75 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  **/
 export const authOptions: NextAuthOptions = {
+  providers: [
+    CredentialsProvider({
+      id: "credentials",
+      name: "Email",
+      credentials: {
+        username: {
+          label: "Email",
+          type: "text",
+          placeholder: "acarnegie@andrew.cmu.edu",
+        },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        // You need to provide your own logic here that takes the credentials
+        // submitted and returns either a object representing a user or value
+        // that is false/null if the credentials are invalid.
+        // e.g. return { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
+        // You can also use the `req` object to obtain additional parameters
+        // (i.e., the request IP address)
+
+        const authResponse = await fetch(`${env.HELIX_BASE_URL}/auth/login`, {
+          method: "POST",
+          body: JSON.stringify({
+            email: credentials?.username,
+            password: credentials?.password,
+          }),
+          headers: { "Content-Type": "application/json" },
+        });
+
+        if (!authResponse.ok) {
+          return null;
+        }
+
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const helixUser = (await authResponse.json()) as HelixUser | null;
+        if (helixUser) {
+          const user: AdminUser = {
+            id: helixUser._id,
+            email: helixUser.email,
+            admin: helixUser.admin,
+          };
+          return user;
+        }
+        // Return null if user data could not be retrieved
+        return null;
+      },
+    }),
+  ],
   callbacks: {
-    session({ session, user }) {
-      if (session.user) {
-        session.user.id = user.id;
-        // session.user.role = user.role; <-- put other properties on the session here
+    jwt: ({ token, user }) => {
+      if (user) {
+        token.id = user.id;
+        token.email = user.email;
+      }
+      return token;
+    },
+    session: ({ session, token }: { session: Session; token: JWT }) => {
+      if (token) {
+        session.id = token.id as string;
       }
       return session;
     },
   },
-  providers: [
-    DiscordProvider({
-      clientId: env.DISCORD_CLIENT_ID,
-      clientSecret: env.DISCORD_CLIENT_SECRET,
-    }),
-    /**
-     * ...add more providers here
-     *
-     * Most other providers require a bit more work than the Discord provider.
-     * For example, the GitHub provider requires you to add the
-     * `refresh_token_expires_in` field to the Account model. Refer to the
-     * NextAuth.js docs for the provider you want to use. Example:
-     *
-     * @see https://next-auth.js.org/providers/github
-     **/
-  ],
+  session: {
+    strategy: "jwt",
+  },
+  pages: {
+    signIn: "/auth/login",
+  },
 };
 
 /**
