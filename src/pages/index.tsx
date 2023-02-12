@@ -29,9 +29,8 @@ export default function Home() {
   return (
     <>
       <Header />
-      <main>
-        <SideNav selection={dashboard} />
-      </main>
+      <SideNav selection={dashboard} />
+      <main className="ml-60 p-5">{/* Insert content here */}</main>
     </>
   );
 }
