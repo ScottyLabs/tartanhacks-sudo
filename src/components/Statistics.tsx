@@ -3,7 +3,7 @@ import { useSession } from "next-auth/react";
 import PeopleIcon from "../icons/PeopleIcon";
 
 function Statistics() {
-    const [data, setData] = useState(null);
+    const [data, setData] = useState<string>('');
     const { data: session, status } = useSession();
 
     useEffect(() => {
@@ -12,7 +12,7 @@ function Statistics() {
                 'x-access-token': session?.accessToken as string
             }
         })
-            .then(response => response.json())
+            .then(response => response.json() as Promise<string>)
             .then(data => setData(data))
             .catch(error => console.error(error));
     }, []);
