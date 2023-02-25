@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { z } from "zod";
 import Header from "../components/Header";
 import SideNav from "../components/SideNav";
+import Status from "./status";
 
 // Router query params
 const querySchema = z.object({
@@ -26,11 +27,24 @@ export default function Home() {
     return null;
   }
 
+  function renderSwitch() {
+    switch (dashboard) {
+      case "participants":
+        return <p>Participants</p>
+      case "checkins":
+        return <p>Check-ins</p>
+      default:
+        return <Status />
+    }
+  }
+
   return (
     <>
       <Header />
       <SideNav selection={dashboard} />
-      <main className="ml-60 p-5">{/* Insert content here */}</main>
+      <main className="ml-60 p-5"> {
+        renderSwitch()
+      } </main>
     </>
   );
 }
