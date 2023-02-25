@@ -14,10 +14,12 @@ interface HelixUser {
   _id: string;
   admin: boolean;
   email: string;
+  token: string;
 }
 
 interface AdminUser extends User {
   admin: boolean;
+  accessToken: string;
 }
 
 /**
@@ -29,6 +31,7 @@ interface AdminUser extends User {
  **/
 declare module "next-auth" {
   interface Session extends DefaultSession {
+    accessToken: string;
     user: {
       id: string;
       // ...other properties
@@ -36,10 +39,11 @@ declare module "next-auth" {
     } & DefaultSession["user"];
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User {
+    accessToken: string;
+    // ...other properties
+    // role: UserRole;
+  }
 }
 
 /**
@@ -89,6 +93,7 @@ export const authOptions: NextAuthOptions = {
             id: helixUser._id,
             email: helixUser.email,
             admin: helixUser.admin,
+            accessToken: helixUser.token,
           };
           return user;
         }
@@ -102,12 +107,14 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
         token.email = user.email;
+        token.accessToken = user.accessToken;
       }
       return token;
     },
     session: ({ session, token }: { session: Session; token: JWT }) => {
       if (token) {
         session.id = token.id as string;
+        session.accessToken = token.accessToken as string;
       }
       return session;
     },
