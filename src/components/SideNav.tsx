@@ -45,7 +45,7 @@ function DashboardLink({ children, target, selection }: DashboardLinkProps) {
  */
 export default function SideNav({ selection }: SideNavProps) {
   return (
-    <div className="absolute h-full w-60 bg-white px-1 shadow-md">
+    <div className="absolute h-full w-60 bg-white">
       <ul className="relative">
         <li className="relative">
           <DashboardLink target="" selection={selection}>
