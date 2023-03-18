@@ -6,16 +6,9 @@ import {
   type NextAuthOptions,
   type Session,
 } from "next-auth";
-import { env } from "../env.mjs";
 import CredentialsProvider from "next-auth/providers/credentials";
 import type { JWT } from "next-auth/jwt/types.js";
-
-interface HelixUser {
-  _id: string;
-  admin: boolean;
-  email: string;
-  token: string;
-}
+import { AuthService } from "../pages/api/services/AuthService";
 
 interface AdminUser extends User {
   admin: boolean;
@@ -73,22 +66,10 @@ export const authOptions: NextAuthOptions = {
         // You can also use the `req` object to obtain additional parameters
         // (i.e., the request IP address)
 
-        const authResponse = await fetch(`${env.HELIX_BASE_URL}/auth/login`, {
-          method: "POST",
-          body: JSON.stringify({
-            email: credentials?.username,
-            password: credentials?.password,
-          }),
-          headers: { "Content-Type": "application/json" },
-        });
-
-        if (!authResponse.ok) {
-          return null;
-        }
-
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const helixUser = (await authResponse.json()) as HelixUser | null;
-        if (helixUser) {
+        const helixUser = await AuthService.login(
+          credentials?.username ?? "", credentials?.password ?? "");
+        if (!helixUser) return null;
+        else {
           const user: AdminUser = {
             id: helixUser._id,
             email: helixUser.email,
@@ -97,8 +78,6 @@ export const authOptions: NextAuthOptions = {
           };
           return user;
         }
-        // Return null if user data could not be retrieved
-        return null;
       },
     }),
   ],
