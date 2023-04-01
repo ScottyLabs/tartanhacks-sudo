@@ -28,8 +28,8 @@ import {
 function Participants() {
   const [data, setData] = useState<Participant[]>([]);
   const [active, setActive] = useState<Participant[]>([]);
-  const [adminFilter, setAdminFilter] = useState<String>("");
-  const [statusFilter, setStatusFilter] = useState<String>("");
+  const [adminFilter, setAdminFilter] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("");
   const { data: session, status } = useSession();
 
   useEffect(() => {
@@ -50,7 +50,7 @@ function Participants() {
   }
 
   const changeAdminFilter = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const val : String = event.target.value
+    const val : string = event.target.value
     setAdminFilter(val)
     setActive(data.filter(p => String(p.admin).toUpperCase() == val || val == "ALL"))
   };
