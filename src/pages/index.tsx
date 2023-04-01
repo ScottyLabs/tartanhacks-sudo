@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { z } from "zod";
 import Header from "../components/Header";
 import SideNav from "../components/SideNav";
+import Participants from "../components/Participants";
 import Status from "./status";
 
 // Router query params
@@ -30,7 +31,7 @@ export default function Home() {
   function renderSwitch() {
     switch (dashboard) {
       case "participants":
-        return <p>Participants</p>
+        return <Participants />
       case "checkins":
         return <p>Check-ins</p>
       default:
