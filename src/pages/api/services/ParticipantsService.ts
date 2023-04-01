@@ -1,12 +1,5 @@
 import { ApiClient } from "../ApiClient";
-
-export interface Participant {
-	_id: string;
-	admin: boolean;
-	email: string;
-	status: string;
-	judge: boolean;
-}
+import { Participant } from "../../../types";
 
 const getParticipants = async (name: string, token: string): Promise<Participant[]> => {
 	return await ApiClient.get(`/participants`, {
