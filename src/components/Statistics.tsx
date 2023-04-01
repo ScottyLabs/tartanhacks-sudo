@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useSession } from "next-auth/react";
 import GroupIcon from "../icons/GroupIcon";
-import UserStatistics from './UserStatistics';
+import { ParticipantsService, Participant } from "../pages/api/services/ParticipantsService";
+import PeopleIcon from "../icons/PeopleIcon";
 
-interface User {
-    status: string;
-}
-
-function countUsers(users: User[], status: string) {
+function countParticipants(users: Participant[], status: string) {
     let count = 0;
     users.forEach(element => {
         if (element["status"] == status) count++;
@@ -16,20 +13,13 @@ function countUsers(users: User[], status: string) {
 }
 
 function Statistics() {
-    const [data, setData] = useState<User[]>(Object);
+    const [data, setData] = useState<Participant[]>([]);
     const [loaded, setLoaded] = useState(false);
     const { data: session } = useSession();
 
-
     useEffect(() => {
-        fetch('https://dev.backend.tartanhacks.com/participants', {
-            headers: {
-                'x-access-token': session?.accessToken as string
-            }
-        })
-            .then(response => response.json() as Promise<User[]>)
-            .then(data => setData(data))
-            .then(() => setLoaded(true))
+        ParticipantsService.getParticipants("", session?.accessToken as string)
+            .then(data => { setData(data); setLoaded(true) })
             .catch(error => console.error(error));
     }, []);
 
@@ -48,7 +38,7 @@ function Statistics() {
                 {statLabels.map((statLabel) => {
                     return (
                         <div key={statLabel}>
-                            <UserStatistics fieldName={statLabel} numUsers={countUsers(data, statLabel.toUpperCase())} />
+                            <ParticipantStatistics status={statLabel} numUsers={countParticipants(data, statLabel.toUpperCase())} />
                             <br />
                         </div>
                     );
@@ -59,6 +49,22 @@ function Statistics() {
     } else {
         return <p>Loading...</p>;
     }
+}
+
+interface ParticipantStatisticsProps {
+    status: string;
+    numUsers: number;
+}
+
+function ParticipantStatistics({ status, numUsers }: ParticipantStatisticsProps) {
+    return (
+        <div className="inline-flex items-center">
+            <PeopleIcon />
+            <div className="ml-1">
+                <p className="">{status} users: {numUsers}</p>
+            </div>
+        </div>
+    );
 }
 
 export default Statistics;
