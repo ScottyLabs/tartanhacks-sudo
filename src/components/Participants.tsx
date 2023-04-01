@@ -30,10 +30,9 @@ function Participants() {
   const [active, setActive] = useState<Participant[]>([]);
   const [adminFilter, setAdminFilter] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("");
-  const { data: session, status } = useSession();
 
   useEffect(() => {
-    ParticipantsService.getParticipants("", session?.accessToken as string)
+    ParticipantsService.getParticipants("")
       .then(data => {setData(data); setActive(data)})
       .catch(error => console.error(error));
   }, []);
