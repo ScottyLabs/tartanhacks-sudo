@@ -20,9 +20,10 @@ import {
   PopoverArrow,
   PopoverCloseButton,
   PopoverAnchor,
+  Box, 
+  Button,
+  Select
 } from '@chakra-ui/react'
-import { boolean } from 'zod';
-import { m } from 'framer-motion';
 
 function Participants() {
   const [data, setData] = useState<Participant[]>([]);
@@ -48,6 +49,12 @@ function Participants() {
     setActive(data.filter(p => match ? p.admin == match : true))
   }
 
+  const changeAdminFilter = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const val : String = event.target.value
+    setAdminFilter(val)
+    setActive(data.filter(p => String(p.admin).toUpperCase() == val || val == "ALL"))
+  };
+
   function filterStatus() {
     const options = ["", "CONFIRMED", "ADMITTED", "VERIFIED", "DECLINED"]
     const match = options[randInt(0, options.length)]
@@ -65,8 +72,27 @@ function Participants() {
               <Tr>
                 <Th>id</Th>
                 <Th>email</Th>
-                <Th className='hover:bg-yellow-100' onClick={filterAdmin}>
-                  {"admin" + (adminFilter && `: ${adminFilter}`)}
+                <Th className='hover:bg-yellow-100'>
+                  <Popover>
+                    <PopoverTrigger>
+                      <Box tabIndex={0} role='button'>
+                        {"admin" + (adminFilter == "ALL" ? "" : `: ${adminFilter}`)}
+                      </Box>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      <PopoverArrow />
+                      <PopoverCloseButton />
+                      <PopoverHeader>Admin Options</PopoverHeader>
+                      <PopoverBody>
+                        <div className='mb-2'>Filter:</div>
+                        <Select size="sm" placeholder='Select option' onChange={changeAdminFilter}>
+                          <option value='ALL'>All</option>
+                          <option value='TRUE'>True</option>
+                          <option value='FALSE'>False</option>
+                        </Select>
+                      </PopoverBody>
+                    </PopoverContent>
+                  </Popover>
                 </Th>
                 <Th className='hover:bg-yellow-100' onClick={filterStatus}>
                   {"status" + (statusFilter && `: ${statusFilter}`)}
