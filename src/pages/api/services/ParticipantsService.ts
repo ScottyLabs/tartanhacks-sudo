@@ -8,16 +8,13 @@ export interface Participant {
 	judge: boolean;
 }
 
-const getParticipants = async (name: string, token: string): Promise<Participant[]> => {
+const getParticipants = async (name: string): Promise<Participant[]> => {
 	return await ApiClient.get(`/participants`, {
 		params: { name },
-		headers: {
-			'x-access-token': token
-		}
 	}).then(function ({ data }: { data: Participant[] }) {
 		return data;
 	}).catch(function (res) {
-		console.log(res)
+		console.log(res);
 		return [];
 	});
 }
