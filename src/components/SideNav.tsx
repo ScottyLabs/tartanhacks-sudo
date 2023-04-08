@@ -2,6 +2,7 @@ import clsx from "clsx";
 import Link from "next/link";
 import CheckIcon from "../icons/CheckIcon";
 import PersonIcon from "../icons/PersonIcon";
+import HomeIcon from "../icons/HomeIcon";
 
 interface SideNavProps {
   selection?: string;
@@ -17,7 +18,7 @@ interface DashboardLinkProps {
  * A single entry link in the SideNav
  */
 function DashboardLink({ children, target, selection }: DashboardLinkProps) {
-  const selected = target === selection;
+  const selected = (target === selection) || (target == "" && selection == null);
   return (
     <Link
       href={`/?dashboard=${target}`}
@@ -44,8 +45,14 @@ function DashboardLink({ children, target, selection }: DashboardLinkProps) {
  */
 export default function SideNav({ selection }: SideNavProps) {
   return (
-    <div className="absolute h-full w-60 bg-white px-1 shadow-md">
+    <div className="absolute h-full w-60 bg-white">
       <ul className="relative">
+        <li className="relative">
+          <DashboardLink target="" selection={selection}>
+            <HomeIcon className="mr-3" />
+            <span>Home</span>
+          </DashboardLink>
+        </li>
         <li className="relative">
           <DashboardLink target="participants" selection={selection}>
             <PersonIcon className="mr-3" />
