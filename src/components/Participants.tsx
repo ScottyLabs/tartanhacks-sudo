@@ -15,13 +15,19 @@ import {
 
 function Participants() {
   const [data, setData] = useState<Participant[]>([]);
+<<<<<<< HEAD
   const [active, setActive] = useState<Participant[] | null>(null);
   const [adminFilter, setAdminFilter] = useState<string>("ALL");
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
   const { data: session, status } = useSession();
+=======
+  const [active, setActive] = useState<Participant[]>([]);
+  const [adminFilter, setAdminFilter] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("");
+>>>>>>> main
 
   useEffect(() => {
-    ParticipantsService.getParticipants("", session?.accessToken as string)
+    ParticipantsService.getParticipants("")
       .then(data => {setData(data); setActive(data)})
       .catch(error => console.error(error));
   }, []);
