@@ -7,20 +7,15 @@ import {
   Table,
   Thead,
   Tbody,
-  Tfoot,
   Tr,
   Th,
   Td,
-  TableCaption,
   TableContainer,
-  Box, 
-  Button,
-  Select
 } from '@chakra-ui/react'
 
 function Participants() {
   const [data, setData] = useState<Participant[]>([]);
-  const [active, setActive] = useState<Participant[]>([]);
+  const [active, setActive] = useState<Participant[] | null>(null);
   const [adminFilter, setAdminFilter] = useState<string>("ALL");
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
   const { data: session, status } = useSession();
@@ -30,10 +25,6 @@ function Participants() {
       .then(data => {setData(data); setActive(data)})
       .catch(error => console.error(error));
   }, []);
-
-  function randInt(min: number, max: number) {
-    return Math.floor(Math.random() * (max - min)) + min;
-  }
 
   const changeAdminFilter = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const val : string = event.target.value
@@ -47,14 +38,7 @@ function Participants() {
     setActive(data.filter(p => String(p.status).toUpperCase() == val || val == "ALL"))
   };
 
-  function filterStatus() {
-    const options = ["", "CONFIRMED", "ADMITTED", "VERIFIED", "DECLINED"]
-    const match = options[randInt(0, options.length)]
-    setStatusFilter(match ?? "")
-    setActive(data.filter(p => match ? p.status == match : true))
-  }
-
-  if (data) {
+  if (active) {
     return (
       <div>
         <div className="text-xl mb-8">PARTICIPANT DATA</div>
@@ -97,7 +81,12 @@ function Participants() {
       </div>
     );
   } else {
-    return <p>Loading...</p>;
+    return (
+      <div>
+        <div className="text-xl mb-8">PARTICIPANT DATA</div>
+        <p>Loading...</p>
+      </div>
+    )
   }
 }
 
