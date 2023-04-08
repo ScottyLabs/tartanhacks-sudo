@@ -37,7 +37,7 @@ export default function PopOverHeader(props: Props) {
 						<div className='mb-2'>Filter:</div>
 						<Select size="sm" defaultValue={props.defaultValue} onChange={props.onChange}>
 							{props.filterOptions.map(
-								x => <option value={x}>{x}</option>
+								x => <option key={x} value={x}>{x}</option>
 							)}
 						</Select>
 					</PopoverBody>
