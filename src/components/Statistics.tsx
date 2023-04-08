@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSession } from "next-auth/react";
 import GroupIcon from "../icons/GroupIcon";
-import { ParticipantsService, Participant } from "../pages/api/services/ParticipantsService";
+import { ParticipantsService } from "../pages/api/services/ParticipantsService";
+import { Participant } from '../types';
 import PeopleIcon from "../icons/PeopleIcon";
 
 function countParticipants(users: Participant[], status: string) {
@@ -18,7 +19,7 @@ function Statistics() {
     const { data: session } = useSession();
 
     useEffect(() => {
-        ParticipantsService.getParticipants("", session?.accessToken as string)
+        ParticipantsService.getParticipants("")
             .then(data => { setData(data); setLoaded(true) })
             .catch(error => console.error(error));
     }, []);
