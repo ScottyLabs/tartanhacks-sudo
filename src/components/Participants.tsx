@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSession } from "next-auth/react";
 import { ParticipantsService } from "../pages/api/services/ParticipantsService";
 import { Participant } from '../types';
+import PopOverHeader from './PopOverHeader';
 import {
   Table,
   Thead,
@@ -12,15 +13,6 @@ import {
   Td,
   TableCaption,
   TableContainer,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverBody,
-  PopoverFooter,
-  PopoverArrow,
-  PopoverCloseButton,
-  PopoverAnchor,
   Box, 
   Button,
   Select
@@ -41,40 +33,6 @@ function Participants() {
 
   function randInt(min: number, max: number) {
     return Math.floor(Math.random() * (max - min)) + min;
-  }
-
-  interface POHProps {
-    label: string;
-    filterOptions: string[];
-    defaultValue: string;
-    onChange: React.ChangeEventHandler<HTMLSelectElement> | undefined;
-  }
-
-  function PopOverHeader(props: POHProps) {
-    return (
-      <Th className='hover:bg-yellow-100'>
-        <Popover>
-          <PopoverTrigger>
-            <Box tabIndex={0} role='button'>
-              {props.label}
-            </Box>
-          </PopoverTrigger>
-          <PopoverContent>
-            <PopoverArrow />
-            <PopoverCloseButton />
-            <PopoverHeader>Admin Options</PopoverHeader>
-            <PopoverBody>
-              <div className='mb-2'>Filter:</div>
-              <Select size="sm" defaultValue={props.defaultValue} onChange={props.onChange}>
-                {props.filterOptions.map(
-                  x => <option value={x}>{x}</option>
-                )}
-              </Select>
-            </PopoverBody>
-          </PopoverContent>
-        </Popover>
-      </Th>
-    );
   }
 
   const changeAdminFilter = (event: React.ChangeEvent<HTMLSelectElement>) => {
