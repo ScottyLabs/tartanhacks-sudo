@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { z } from "zod";
 import Header from "../components/Header";
 import SideNav from "../components/SideNav";
+import Participants from "../components/Participants";
 import Status from "./status";
 import CheckInTable from "../components/CheckinTable";
 
@@ -31,7 +32,7 @@ export default function Home() {
   function renderSwitch() {
     switch (dashboard) {
       case "participants":
-        return (<div><p>Participants</p></div>)
+        return <Participants />
       case "checkins":
         return <CheckInTable />
       default:
