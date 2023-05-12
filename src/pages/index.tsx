@@ -6,6 +6,7 @@ import { z } from "zod";
 import Header from "../components/Header";
 import SideNav from "../components/SideNav";
 import Status from "./status";
+import CheckInTable from "../components/CheckinTable";
 
 // Router query params
 const querySchema = z.object({
@@ -30,9 +31,9 @@ export default function Home() {
   function renderSwitch() {
     switch (dashboard) {
       case "participants":
-        return <p>Participants</p>
+        return (<div><p>Participants</p></div>)
       case "checkins":
-        return <p>Check-ins</p>
+        return <CheckInTable />
       default:
         return <Status />
     }
